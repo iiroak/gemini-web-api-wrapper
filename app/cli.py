@@ -3,6 +3,7 @@ CLI entry point for gemini-web-api-wrapper.
 
 Usage:
     gemini-web init                   # Interactive first-time setup
+    gemini-web check                  # Validate config & test connection
     gemini-web serve                  # Start the API server
     gemini-web token generate         # Generate a new API token
     gemini-web token show             # Show current token (masked)
@@ -336,6 +337,88 @@ def config_reset():
         for f in files:
             f.unlink()
         click.echo("  ✅ Configuration reset.")
+
+
+# ══════════════════════════════════════════════════════════════════
+# check
+# ══════════════════════════════════════════════════════════════════
+
+@cli.command()
+def check():
+    """Validate configuration and test Gemini connection."""
+    import asyncio
+
+    cfg = _load_config()
+    ok = True
+
+    # 1. Config file
+    if _config_file().exists():
+        click.echo("  ✅ Config file exists")
+    else:
+        click.echo("  ❌ Config file not found. Run `gemini-web init`.")
+        sys.exit(1)
+
+    # 2. API token
+    api_key = cfg.get("API_KEY", "")
+    if api_key and api_key != "changeme":
+        click.echo(f"  ✅ API token set ({_mask(api_key)})")
+    else:
+        click.echo("  ❌ API token not set. Run `gemini-web token generate`.")
+        ok = False
+
+    # 3. Cookies
+    psid = cfg.get("GEMINI_SECURE_1PSID", "")
+    psidts = cfg.get("GEMINI_SECURE_1PSIDTS", "")
+    if psid:
+        click.echo(f"  ✅ __Secure-1PSID set ({_mask(psid)})")
+    else:
+        click.echo("  ❌ __Secure-1PSID not set. Run `gemini-web cookies set`.")
+        ok = False
+    if psidts:
+        click.echo(f"  ✅ __Secure-1PSIDTS set ({_mask(psidts)})")
+    else:
+        click.echo("  ⚠️  __Secure-1PSIDTS not set (optional but recommended)")
+
+    # 4. Test Gemini connection
+    if psid:
+        click.echo("\n  🔄 Testing Gemini connection...")
+        try:
+            from gemini_webapi import GeminiClient
+
+            async def _test():
+                proxy = cfg.get("GEMINI_PROXY") or None
+                client = GeminiClient(
+                    secure_1psid=psid,
+                    secure_1psidts=psidts or None,
+                    proxy=proxy,
+                )
+                await client.init(timeout=30, auto_close=False, close_delay=0)
+                # Try to get account status as a simple check
+                status = await client.check_access()
+                await client.close()
+                return status
+
+            status = asyncio.run(_test())
+            click.echo(f"  ✅ Gemini connection OK (status: {status})")
+        except Exception as e:
+            click.echo(f"  ❌ Gemini connection failed: {e}")
+            ok = False
+
+    # 5. Database
+    db_path = cfg.get("DATABASE_PATH", str(_config_dir() / "gemini.db"))
+    db_file = Path(db_path)
+    if db_file.exists():
+        click.echo(f"  ✅ Database exists ({db_file})")
+    else:
+        click.echo(f"  ⚠️  Database not found ({db_file}) — will be created on first run")
+
+    # Summary
+    click.echo()
+    if ok:
+        click.echo("  ✅ All checks passed. Ready to run `gemini-web serve`.")
+    else:
+        click.echo("  ❌ Some checks failed. Fix the issues above before starting.")
+        sys.exit(1)
 
 
 # ══════════════════════════════════════════════════════════════════

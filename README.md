@@ -9,57 +9,62 @@ Built on top of [**Gemini-API**](https://github.com/HanaokaYuzu/Gemini-API) by [
 A [SKILL.md](SKILL.md) is included for use with [OpenClaw](https://github.com/openclaw) — it provides the full API reference, authentication details, and usage patterns so AI agents can interact with this wrapper automatically.
 
 ## Installation
+## Installation (Linux)
 
-### Prerequisites
-
-- **Python 3.10+** and **pip**
-- On Debian/Ubuntu, you may also need `python3-venv`:
-  ```bash
-  sudo apt install python3 python3-pip python3-venv
-  ```
-
-### Recommended: using a virtual environment
+### One-command install
 
 ```bash
-# Create and activate a virtual environment
-python3 -m venv .venv
-
-# Windows
-.venv\Scripts\activate
-
-# macOS/Linux
-source .venv/bin/activate
+sudo bash -c "$(curl -fsSL https://raw.githubusercontent.com/iiroak/gemini-web-api-wrapper/master/install.sh)"
 ```
 
-### Install from GitHub (recommended)
+Or clone first and run:
 
 ```bash
-# Create venv first
-python3 -m venv .venv
-source .venv/bin/activate  # Linux/macOS
-# .venv\Scripts\activate   # Windows
-
-# Clone and install gemini-webapi (core dependency)
-git clone https://github.com/HanaokaYuzu/Gemini-API.git
-cd Gemini-API
-pip install .
-cd ..
-
-# Clone and install the wrapper
 git clone https://github.com/iiroak/gemini-web-api-wrapper.git
 cd gemini-web-api-wrapper
-pip install .
+sudo bash install.sh
 ```
 
-### One-liner install script
+This will:
+- Install system dependencies (`python3`, `python3-venv`, `git`)
+- Clone and install `gemini-webapi` and the wrapper into `/opt/gemini-web/`
+- Create a symlink so `gemini-web` is available system-wide in PATH
+- Install the systemd service file
+
+### Run as a systemd service
 
 ```bash
-python3 -m venv .venv && source .venv/bin/activate && \
-git clone https://github.com/HanaokaYuzu/Gemini-API.git && pip install ./Gemini-API && \
-git clone https://github.com/iiroak/gemini-web-api-wrapper.git && pip install ./gemini-web-api-wrapper
+# Configure first
+gemini-web init
+
+# Enable and start the service
+sudo systemctl enable gemini-web
+sudo systemctl start gemini-web
+
+# Check status
+sudo systemctl status gemini-web
+
+# View logs
+sudo journalctl -u gemini-web -f
 ```
 
-> **Important:** Both packages must be installed inside a virtual environment. On Debian/Ubuntu you may need `python3-venv`: `sudo apt install python3-venv`
+### Manual install
+
+If you prefer to install manually:
+
+```bash
+sudo mkdir -p /opt/gemini-web && cd /opt/gemini-web
+sudo python3 -m venv .venv
+source .venv/bin/activate
+
+git clone https://github.com/HanaokaYuzu/Gemini-API.git
+pip install ./Gemini-API
+
+git clone https://github.com/iiroak/gemini-web-api-wrapper.git
+pip install ./gemini-web-api-wrapper
+
+sudo ln -sf /opt/gemini-web/.venv/bin/gemini-web /usr/local/bin/gemini-web
+```
 
 ## Quick Start
 
