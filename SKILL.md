@@ -21,6 +21,16 @@ Authorization: Bearer <API_KEY>
 
 The API key is configured via `gemini-web token show` or `gemini-web config get API_KEY`.
 
+### Local requests without auth
+
+If `LOCAL_NO_AUTH` is `true` in config, requests from `127.0.0.1` / `::1` skip authentication entirely — no Bearer token needed. Enable it with:
+
+```bash
+gemini-web config set LOCAL_NO_AUTH true
+```
+
+This is useful when the API client runs on the same machine as the server.
+
 ## Installation & Setup
 
 ### Prerequisites
@@ -334,10 +344,28 @@ data: { ...full result... }
 
 ### Image Generation
 - Image generation can take **several minutes** (1-5+ minutes depending on complexity). **Set HTTP timeout to at least 480 seconds** (8 minutes) for image requests.
-- Generated images appear in `candidates[].generated_images` as URLs.
-- The response `text` field may contain a description alongside the image.
-- To save a generated image, download it from the URL in `generated_images` or use `GET /files/download?url=<image_url>`.
+- Generated images appear in `candidates[].generated_images` as objects with `url`, `title`, and `alt` fields.
+- The response `text` field may be empty when an image is generated (text is not always returned with images).
+- To save a generated image, download it from the URL in `generated_images`:
+  - Via server proxy: `GET /files/download?url=<image_url>` (uses authenticated session)
+  - Direct download: the `lh3.googleusercontent.com` URLs are typically accessible without auth
 - **Do NOT cancel or retry** if the request seems slow — image generation is inherently slow.
+- **Do NOT specify a model** for image generation — just describe the image in the prompt. Gemini auto-selects.
+
+#### Example: generate and save an image
+```bash
+# 1. Request image generation (no model needed)
+response=$(curl -s -X POST http://localhost:8000/chat/send \
+  -H "Authorization: Bearer TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"prompt": "Draw a chibi cat with a top hat"}')
+
+# 2. Extract image URL from response
+image_url=$(echo "$response" | jq -r '.candidates[0].generated_images[0].url')
+
+# 3. Download the image
+curl -o image.png "$image_url"
+```
 
 ### Token Management
 - After changing the token with `gemini-web token generate` or `gemini-web token set`, the **server must be restarted** for the new token to take effect.

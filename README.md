@@ -111,6 +111,8 @@ curl http://localhost:8000/chat/send \
 |---------|-------------|
 | **Setup** | |
 | `gemini-web init` | Interactive first-time setup |
+| `gemini-web check` | Validate config & test Gemini connection |
+| `gemini-web update` | Pull latest code & reinstall (system install) |
 | `gemini-web serve` | Start the API server |
 | `gemini-web serve --port 9000` | Start on a custom port |
 | `gemini-web serve --reload` | Start with auto-reload (dev) |
@@ -148,6 +150,7 @@ All configuration lives in `~/.gemini-web/config.json`, managed entirely via CLI
 | `GEMINI_PROXY` | — | HTTP/HTTPS proxy URL |
 | `GEMINI_MODEL` | `UNSPECIFIED` | Default model |
 | `GEMINI_TIMEOUT` | `450` | Request timeout (seconds) |
+| `LOCAL_NO_AUTH` | `false` | Skip auth for local requests (127.0.0.1/::1) |
 | `HOST` | `0.0.0.0` | Server bind host |
 | `PORT` | `8000` | Server bind port |
 

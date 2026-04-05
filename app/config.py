@@ -55,6 +55,7 @@ class Settings(BaseSettings):
     GEMINI_WATCHDOG_TIMEOUT: float = float(_user_cfg.get("GEMINI_WATCHDOG_TIMEOUT", 90))
     GEMINI_AUTO_REFRESH: bool = _user_cfg.get("GEMINI_AUTO_REFRESH", True)
     DATABASE_PATH: str = _user_cfg.get("DATABASE_PATH", _user_db_path())
+    LOCAL_NO_AUTH: bool = _user_cfg.get("LOCAL_NO_AUTH", False)
     HOST: str = _user_cfg.get("HOST", "0.0.0.0")
     PORT: int = int(_user_cfg.get("PORT", 8000))
 
