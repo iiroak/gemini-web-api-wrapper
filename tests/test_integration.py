@@ -13,6 +13,7 @@ import sys
 import time
 import subprocess
 import socket
+from pathlib import Path
 
 import pytest
 import httpx
@@ -39,17 +40,17 @@ def _wait_for_server(host: str, port: int, timeout: float = 120) -> None:
 
 
 def _load_api_key() -> str:
-    """Read API_KEY from .env or environment."""
+    """Read API_KEY from ~/.gemini-web/config.json or environment."""
     key = os.getenv("API_KEY")
     if key:
         return key
-    env_path = os.path.join(os.path.dirname(__file__), "..", ".env")
-    if os.path.isfile(env_path):
-        with open(env_path) as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith("API_KEY="):
-                    return line.split("=", 1)[1].strip()
+    cfg_path = os.path.join(str(Path.home()), ".gemini-web", "config.json")
+    if os.path.isfile(cfg_path):
+        import json
+        with open(cfg_path) as f:
+            cfg = json.load(f)
+            if cfg.get("API_KEY"):
+                return cfg["API_KEY"]
     return "changeme"
 
 

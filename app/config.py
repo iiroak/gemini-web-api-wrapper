@@ -6,9 +6,13 @@ from pathlib import Path
 from pydantic_settings import BaseSettings
 
 
+def _config_dir() -> Path:
+    return Path.home() / ".gemini-web"
+
+
 def _load_user_config() -> dict:
     """Load ~/.gemini-web/config.json if it exists."""
-    f = Path.home() / ".gemini-web" / "config.json"
+    f = _config_dir() / "config.json"
     if f.exists():
         try:
             return json.loads(f.read_text(encoding="utf-8"))
@@ -19,7 +23,7 @@ def _load_user_config() -> dict:
 
 def _user_db_path() -> str:
     """Default DB path inside the user config dir."""
-    return str(Path.home() / ".gemini-web" / "gemini.db")
+    return str(_config_dir() / "gemini.db")
 
 
 # Pre-load user config so it can be used as defaults
@@ -27,7 +31,8 @@ _user_cfg = _load_user_config()
 
 
 class Settings(BaseSettings):
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    # No .env — all config comes from CLI (~/.gemini-web/config.json) or env vars
+    model_config = {"env_file_encoding": "utf-8"}
 
     API_KEY: str = _user_cfg.get("API_KEY", "changeme")
     GEMINI_SECURE_1PSID: str = _user_cfg.get("GEMINI_SECURE_1PSID", "")

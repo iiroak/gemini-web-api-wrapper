@@ -9,8 +9,10 @@ RUN pip install --no-cache-dir .
 
 COPY . .
 
-RUN mkdir -p data
+VOLUME /root/.gemini-web
 
 EXPOSE 8000
+
+CMD ["gemini-web", "serve"]
 
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
