@@ -56,6 +56,8 @@ sudo systemctl start gemini-web
 
 ```
 gemini-web init                    # Interactive setup
+gemini-web check                   # Validate config & test connection
+gemini-web update                  # Pull latest code & reinstall
 gemini-web serve                   # Start API server
 gemini-web serve --port 9000       # Custom port
 gemini-web serve --reload          # Dev mode with auto-reload
@@ -78,7 +80,7 @@ gemini-web config path             # Config directory path
 gemini-web config reset            # Delete all config + data
 ```
 
-Config stored in `~/.gemini-web/config.json`.
+Config stored in `$GEMINI_WEB_HOME/config.json` (default: `~/.gemini-web/config.json`, fallback: `/opt/gemini-web/data/config.json`).
 
 ---
 
@@ -322,6 +324,33 @@ data: { ...full result... }
 
 ---
 
+## Important Notes
+
+### Model Selection
+- **Do NOT invent model names.** Only use models returned by `GET /models`.
+- Common models: `gemini-3-flash` (fast), `gemini-3-flash-thinking` (reasoning), `gemini-3-pro` (advanced).
+- If unsure which model to use, **omit the `model` field** — the server uses the default.
+- To generate images, **do NOT specify a model**. Just describe the image in the prompt (e.g. "Draw a chibi Hatsune Miku"). Gemini selects the appropriate model automatically.
+
+### Image Generation
+- Image generation can take **several minutes** (1-5+ minutes depending on complexity). **Set HTTP timeout to at least 480 seconds** (8 minutes) for image requests.
+- Generated images appear in `candidates[].generated_images` as URLs.
+- The response `text` field may contain a description alongside the image.
+- To save a generated image, download it from the URL in `generated_images` or use `GET /files/download?url=<image_url>`.
+- **Do NOT cancel or retry** if the request seems slow — image generation is inherently slow.
+
+### Token Management
+- After changing the token with `gemini-web token generate` or `gemini-web token set`, the **server must be restarted** for the new token to take effect.
+- Use `gemini-web token reveal` to see the current token in plain text.
+- Always use the token from the config file, not a previously cached value.
+
+### Conversation IDs
+- `metadata[0]` in the response is the conversation ID (`cid`).
+- Pass `cid` in subsequent requests to continue the same conversation.
+- Without `cid`, each request starts a new conversation.
+
+---
+
 ## Usage Patterns
 
 ### Simple question-answer
@@ -357,7 +386,7 @@ import httpx
 with httpx.stream("POST", "http://localhost:8000/chat/send/stream",
     headers={"Authorization": "Bearer TOKEN"},
     json={"prompt": "Write a poem"},
-    timeout=120,
+    timeout=480,
 ) as resp:
     for line in resp.iter_lines():
         if line.startswith("data:"):

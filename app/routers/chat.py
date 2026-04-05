@@ -51,17 +51,16 @@ async def send_message(
         chat = session_manager.create(client)
         logger.debug("[chat/send] created new ChatSession")
 
-    kwargs: dict = {}
     if body.model:
-        kwargs["model"] = body.model
+        chat.model = body.model
     if body.gem_id:
-        kwargs["gem"] = body.gem_id
+        chat.gem = body.gem_id
 
     t0 = time.time()
     logger.info(f"[chat/send] calling chat.send_message ...")
     try:
         output = await chat.send_message(
-            body.prompt, temporary=body.temporary, **kwargs
+            body.prompt, temporary=body.temporary,
         )
     except Exception:
         logger.error(f"[chat/send] send_message failed after {time.time()-t0:.1f}s:\n{traceback.format_exc()}")
@@ -88,11 +87,10 @@ async def send_message_stream(
     if chat is None:
         chat = session_manager.create(client)
 
-    kwargs: dict = {}
     if body.model:
-        kwargs["model"] = body.model
+        chat.model = body.model
     if body.gem_id:
-        kwargs["gem"] = body.gem_id
+        chat.gem = body.gem_id
 
     async def event_generator():
         last_output = None
@@ -100,7 +98,7 @@ async def send_message_stream(
         logger.info("[chat/send/stream] starting stream ...")
         try:
             async for chunk in chat.send_message_stream(
-                body.prompt, temporary=body.temporary, **kwargs
+                body.prompt, temporary=body.temporary,
             ):
                 last_output = chunk
                 data = json.dumps(
@@ -148,11 +146,10 @@ async def send_message_with_files(
     if chat is None:
         chat = session_manager.create(client)
 
-    kwargs: dict = {}
     if model:
-        kwargs["model"] = model
+        chat.model = model
     if gem_id:
-        kwargs["gem"] = gem_id
+        chat.gem = gem_id
 
     file_bytes_list = []
     for f in files:
@@ -162,7 +159,6 @@ async def send_message_with_files(
         prompt,
         files=file_bytes_list if file_bytes_list else None,
         temporary=temporary,
-        **kwargs,
     )
 
     if chat.cid:
