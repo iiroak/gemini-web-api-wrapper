@@ -23,14 +23,24 @@ The API key is configured via `gemini-web token show` or `gemini-web config get 
 
 ## Installation & Setup
 
+### Prerequisites
+
+- Python 3.10+ and pip
+- On Debian/Ubuntu: `sudo apt install python3 python3-pip python3-venv`
+
 ```bash
 # Create and activate venv
-python -m venv .venv
-.venv\Scripts\activate       # Windows
+python3 -m venv .venv
 source .venv/bin/activate    # macOS/Linux
+# .venv\Scripts\activate     # Windows
 
-# Install
-pip install git+https://github.com/iiroak/gemini-web-api-wrapper.git
+# Clone and install gemini-webapi (core dependency)
+git clone https://github.com/HanaokaYuzu/Gemini-API.git
+pip install ./Gemini-API
+
+# Clone and install the wrapper
+git clone https://github.com/iiroak/gemini-web-api-wrapper.git
+pip install ./gemini-web-api-wrapper
 
 # First-time setup (cookies + token)
 gemini-web init

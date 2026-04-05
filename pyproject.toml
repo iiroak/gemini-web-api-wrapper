@@ -19,21 +19,21 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-
-[project.urls]
-Homepage = "https://github.com/iiroak/gemini-web-api-wrapper"
-Repository = "https://github.com/iiroak/gemini-web-api-wrapper"
-Issues = "https://github.com/iiroak/gemini-web-api-wrapper/issues"
 dependencies = [
     "fastapi[standard]>=0.115",
     "uvicorn[standard]",
-    "gemini-webapi @ git+https://github.com/HanaokaYuzu/Gemini-API.git",
+    "gemini-webapi",
     "aiosqlite>=0.20",
     "pydantic-settings>=2.0",
     "python-multipart",
     "click>=8.0",
     "loguru",
 ]
+
+[project.urls]
+Homepage = "https://github.com/iiroak/gemini-web-api-wrapper"
+Repository = "https://github.com/iiroak/gemini-web-api-wrapper"
+Issues = "https://github.com/iiroak/gemini-web-api-wrapper/issues"
 
 [project.optional-dependencies]
 dev = [
