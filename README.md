@@ -31,6 +31,14 @@ This will:
 - Create a symlink so `gemini-web` is available system-wide in PATH
 - Install the systemd service file
 
+### Reinstall (clean)
+
+```bash
+sudo bash install.sh --reinstall
+```
+
+This stops the service, removes `/opt/gemini-web/`, and does a fresh install. Config in `~/.gemini-web/` is preserved.
+
 ### Run as a systemd service
 
 ```bash

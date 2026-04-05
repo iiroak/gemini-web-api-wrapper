@@ -26,14 +26,20 @@ import secrets
 import sys
 from pathlib import Path
 
+import os
+
 import click
 
 
 # ── Config directory ─────────────────────────────────────────────
 
 def _config_dir() -> Path:
-    """Return ~/.gemini-web (cross-platform)."""
-    d = Path.home() / ".gemini-web"
+    """Return config directory. Priority: GEMINI_WEB_HOME env > ~/.gemini-web."""
+    env = os.environ.get("GEMINI_WEB_HOME")
+    if env:
+        d = Path(env)
+    else:
+        d = Path.home() / ".gemini-web"
     d.mkdir(parents=True, exist_ok=True)
     return d
 

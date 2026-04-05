@@ -6,25 +6,16 @@ Wants=network-online.target
 
 [Service]
 Type=simple
+Environment=GEMINI_WEB_HOME=/opt/gemini-web/data
 ExecStartPre=/opt/gemini-web/.venv/bin/gemini-web check
 ExecStart=/opt/gemini-web/.venv/bin/gemini-web serve
 Restart=on-failure
 RestartSec=5
 WorkingDirectory=/opt/gemini-web
 
-# Run as a dedicated user (create with: sudo useradd -r -s /bin/false gemini-web)
-# User=gemini-web
-# Group=gemini-web
-
-# Security hardening
-NoNewPrivileges=true
-ProtectSystem=strict
-ProtectHome=read-only
-ReadWritePaths=/root/.gemini-web
-PrivateTmp=true
-
-# Environment
-Environment=HOME=/root
+# User and Group are set by install.sh based on who runs the installer
+# User=__USER__
+# Group=__GROUP__
 
 [Install]
 WantedBy=multi-user.target

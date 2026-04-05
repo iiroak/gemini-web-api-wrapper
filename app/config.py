@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings
 
 
 def _config_dir() -> Path:
+    env = os.environ.get("GEMINI_WEB_HOME")
+    if env:
+        return Path(env)
     return Path.home() / ".gemini-web"
 
 
