@@ -4,15 +4,34 @@ REST API wrapper around [Google Gemini](https://gemini.google.com) — installab
 
 ## Installation
 
+### Recommended: using a virtual environment
+
 ```bash
-pip install gemini-web-api-wrapper
+# Create and activate a virtual environment
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
 ```
 
-Or from source:
+### Install from GitHub (recommended)
 
 ```bash
 pip install git+https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
 ```
+
+### Install from source
+
+```bash
+git clone https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
+cd gemini-web-api-wrapper
+pip install .
+```
+
+> **Note:** The `gemini-webapi` dependency is installed automatically from its GitHub repository.
 
 ## Quick Start
 
@@ -109,6 +128,14 @@ docker run -p 8000:8000 \
 ```bash
 git clone https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
 cd gemini-web-api-wrapper
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+
+# macOS/Linux
+source .venv/bin/activate
+
 pip install -e ".[dev]"
 
 # Unit tests (mocked, fast)
