@@ -399,13 +399,10 @@ def check():
                     proxy=proxy,
                 )
                 await client.init(timeout=30, auto_close=False, close_delay=0)
-                # Try to get account status as a simple check
-                status = await client.check_access()
                 await client.close()
-                return status
 
-            status = asyncio.run(_test())
-            click.echo(f"  ✅ Gemini connection OK (status: {status})")
+            asyncio.run(_test())
+            click.echo("  ✅ Gemini connection OK")
         except Exception as e:
             click.echo(f"  ❌ Gemini connection failed: {e}")
             ok = False
