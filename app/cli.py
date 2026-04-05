@@ -4,6 +4,7 @@ CLI entry point for gemini-web-api-wrapper.
 Usage:
     gemini-web init                   # Interactive first-time setup
     gemini-web check                  # Validate config & test connection
+    gemini-web update                 # Pull latest code & reinstall
     gemini-web serve                  # Start the API server
     gemini-web token generate         # Generate a new API token
     gemini-web token show             # Show current token (masked)
@@ -422,6 +423,58 @@ def check():
     else:
         click.echo("  ❌ Some checks failed. Fix the issues above before starting.")
         sys.exit(1)
+
+
+# ══════════════════════════════════════════════════════════════════
+# update
+# ══════════════════════════════════════════════════════════════════
+
+@cli.command()
+def update():
+    """Pull latest code from git and reinstall packages."""
+    import subprocess
+
+    install_dir = Path("/opt/gemini-web")
+    venv_pip = install_dir / ".venv" / "bin" / "pip"
+
+    if not install_dir.exists() or not venv_pip.exists():
+        click.echo("❌ System install not found at /opt/gemini-web")
+        click.echo("   This command is for system-wide installations only.")
+        sys.exit(1)
+
+    repos = [
+        ("gemini-webapi", install_dir / "Gemini-API"),
+        ("gemini-web-api-wrapper", install_dir / "gemini-web-api-wrapper"),
+    ]
+
+    for name, repo_path in repos:
+        if not repo_path.exists():
+            click.echo(f"  ❌ {name} repo not found at {repo_path}")
+            sys.exit(1)
+
+        click.echo(f"  📥 Pulling {name}...")
+        result = subprocess.run(
+            ["git", "-C", str(repo_path), "pull"],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            click.echo(f"  ❌ git pull failed: {result.stderr.strip()}")
+            sys.exit(1)
+        click.echo(f"     {result.stdout.strip()}")
+
+        click.echo(f"  📦 Installing {name}...")
+        result = subprocess.run(
+            [str(venv_pip), "install", "--quiet", str(repo_path)],
+            capture_output=True, text=True,
+        )
+        if result.returncode != 0:
+            click.echo(f"  ❌ pip install failed: {result.stderr.strip()}")
+            sys.exit(1)
+
+    click.echo()
+    click.echo("  ✅ Update complete!")
+    click.echo("  Restart the service to apply:")
+    click.echo("    sudo systemctl restart gemini-web")
 
 
 # ══════════════════════════════════════════════════════════════════
