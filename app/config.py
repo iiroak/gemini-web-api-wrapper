@@ -11,7 +11,15 @@ def _config_dir() -> Path:
     env = os.environ.get("GEMINI_WEB_HOME")
     if env:
         return Path(env)
-    return Path.home() / ".gemini-web"
+    # User-level config
+    user_dir = Path.home() / ".gemini-web"
+    if (user_dir / "config.json").exists():
+        return user_dir
+    # System-wide fallback (created by install.sh)
+    system_dir = Path("/opt/gemini-web/data")
+    if (system_dir / "config.json").exists():
+        return system_dir
+    return user_dir
 
 
 def _load_user_config() -> dict:

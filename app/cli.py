@@ -35,12 +35,19 @@ import click
 # ── Config directory ─────────────────────────────────────────────
 
 def _config_dir() -> Path:
-    """Return config directory. Priority: GEMINI_WEB_HOME env > ~/.gemini-web."""
+    """Return config directory. Priority: GEMINI_WEB_HOME > ~/.gemini-web > /opt/gemini-web/data."""
     env = os.environ.get("GEMINI_WEB_HOME")
     if env:
         d = Path(env)
     else:
-        d = Path.home() / ".gemini-web"
+        user_dir = Path.home() / ".gemini-web"
+        system_dir = Path("/opt/gemini-web/data")
+        if (user_dir / "config.json").exists():
+            d = user_dir
+        elif (system_dir / "config.json").exists():
+            d = system_dir
+        else:
+            d = user_dir
     d.mkdir(parents=True, exist_ok=True)
     return d
 
