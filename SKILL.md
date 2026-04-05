@@ -30,7 +30,7 @@ python -m venv .venv
 source .venv/bin/activate    # macOS/Linux
 
 # Install
-pip install git+https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
+pip install git+https://github.com/iiroak/gemini-web-api-wrapper.git
 
 # First-time setup (cookies + token)
 gemini-web init

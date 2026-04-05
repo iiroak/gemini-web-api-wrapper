@@ -1,6 +1,12 @@
 # Gemini Web API Wrapper
 
+> **⚠️ Early Beta** — This project is very much a work in progress and highly experimental. Expect breaking changes, rough edges, and incomplete features. Use at your own risk.
+
 REST API wrapper around [Google Gemini](https://gemini.google.com) — installable as a Python package with CLI.
+
+Built on top of [**Gemini-API**](https://github.com/HanaokaYuzu/Gemini-API) by [HanaokaYuzu](https://github.com/HanaokaYuzu). All core Gemini communication — authentication, cookie handling, sessions, and message exchange — is powered by that library (`gemini-webapi`). **This wrapper depends directly on it and cannot run without it.** The goal is to expose Gemini Web as a standard REST API so other services, agents, and applications can consume it over HTTP.
+
+A [SKILL.md](SKILL.md) is included for use with [OpenClaw](https://github.com/openclaw) — it provides the full API reference, authentication details, and usage patterns so AI agents can interact with this wrapper automatically.
 
 ## Installation
 
@@ -20,13 +26,13 @@ source .venv/bin/activate
 ### Install from GitHub (recommended)
 
 ```bash
-pip install git+https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
+pip install git+https://github.com/iiroak/gemini-web-api-wrapper.git
 ```
 
 ### Install from source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
+git clone https://github.com/iiroak/gemini-web-api-wrapper.git
 cd gemini-web-api-wrapper
 pip install .
 ```
@@ -141,7 +147,7 @@ docker run -p 8000:8000 \
 ## Development
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/gemini-web-api-wrapper.git
+git clone https://github.com/iiroak/gemini-web-api-wrapper.git
 cd gemini-web-api-wrapper
 python -m venv .venv
 
@@ -162,4 +168,4 @@ pytest tests/test_integration.py -v -s
 
 ## License
 
-MIT
+AGPL-3.0

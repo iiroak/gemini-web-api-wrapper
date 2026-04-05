@@ -7,7 +7,7 @@ name = "gemini-web-api-wrapper"
 version = "0.1.0"
 description = "REST API wrapper around Google Gemini Web — installable as a CLI application"
 readme = "README.md"
-license = {text = "MIT"}
+license = {text = "AGPL-3.0-or-later"}
 requires-python = ">=3.10"
 keywords = ["gemini", "google", "api", "wrapper", "rest"]
 classifiers = [
@@ -21,9 +21,9 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/gemini-web-api-wrapper"
-Repository = "https://github.com/YOUR_USERNAME/gemini-web-api-wrapper"
-Issues = "https://github.com/YOUR_USERNAME/gemini-web-api-wrapper/issues"
+Homepage = "https://github.com/iiroak/gemini-web-api-wrapper"
+Repository = "https://github.com/iiroak/gemini-web-api-wrapper"
+Issues = "https://github.com/iiroak/gemini-web-api-wrapper/issues"
 dependencies = [
     "fastapi[standard]>=0.115",
     "uvicorn[standard]",
